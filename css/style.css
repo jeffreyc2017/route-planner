@@ -1,0 +1,14 @@
+#map {
+    height: 400px;
+    width: 100%;
+}
+
+/* Style adjustments to display the dropdown at the map click location */
+.address-property-select {
+    z-index: 10; /* Ensure dropdown is above the map */
+    cursor: pointer;
+}
+
+.addressList {
+    margin-top: 20px;
+}
