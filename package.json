@@ -1,0 +1,35 @@
+{
+  "dependencies": {
+    "firebase": "^10.8.0"
+  },
+  "name": "route_planner",
+  "description": "Route planner for postman",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "babel-loader": "^9.1.3",
+    "webpack": "^5.90.1",
+    "webpack-bundle-analyzer": "^4.10.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "scripts": {
+    "watch": "webpack --watch",
+    "start": "webpack serve --open",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffreyc2017/route_planner.git"
+  },
+  "keywords": [],
+  "author": "elysium.dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffreyc2017/route_planner/issues"
+  },
+  "homepage": "https://github.com/jeffreyc2017/route_planner#readme"
+}

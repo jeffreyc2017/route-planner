@@ -12,6 +12,7 @@ let geocoder;
 let drawnPolygon = null;
 
 function initMap() {
+    console.log('Initializing map...');
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: config.zoom,
         center: { lat: config.lat, lng: config.lng },
@@ -73,10 +74,13 @@ window.initMap = initMap;
 
 document.addEventListener("DOMContentLoaded", loadGoogleMapsAPI);
 
-document.getElementById('deletePolygons').addEventListener('click', function() {
-    drawnPolygon.setMap(null);
-    drawnPolygon = null;
-});
+const deletePolygonsBtn = document.getElementById('deletePolygons');
+if (deletePolygonsBtn) {
+    deletePolygonsBtn.addEventListener('click', function() {
+        drawnPolygon.setMap(null);
+        drawnPolygon = null;
+    });
+}
 
 // Example function to display addresses
 function displayAddresses(addresses) {
@@ -90,30 +94,33 @@ function displayAddresses(addresses) {
 }
 
 // Button click event handlers
-document.getElementById('generateAddressList').addEventListener('click', function() {
-    if (!drawnPolygon) {
-        alert("Please define an area first.");
-        return;
-    }
+const generateAddressListBtn = document.getElementById('generateAddressList');
+if (generateAddressListBtn) {
+    generateAddressListBtn.addEventListener('click', function() {
+        if (!drawnPolygon) {
+            alert("Please define an area first.");
+            return;
+        }
 
-    let points = generateCoordinateMatrix(drawnPolygon);
+        let points = generateCoordinateMatrix(drawnPolygon);
 
-    // Assuming points is the array of coordinates generated earlier
-    // Assuming map is the instance of Google Maps
+        // Assuming points is the array of coordinates generated earlier
+        // Assuming map is the instance of Google Maps
 
-    drawPointsOnMap(points, map);
+        drawPointsOnMap(points, map);
 
-    if (promptUserBeforeFetching(points)) {
-        // User chooses to continue, start batch querying addresses
-        fetchAddresses(geocoder, points).then(addresses => {
-            // Process the queried addresses
-            displayAddresses(addresses); // Display the address list
-        });
-    } else {
-        // User chooses to cancel
-        console.log('User cancelled the query.');
-    }
-});
+        if (promptUserBeforeFetching(points)) {
+            // User chooses to continue, start batch querying addresses
+            fetchAddresses(geocoder, points).then(addresses => {
+                // Process the queried addresses
+                displayAddresses(addresses); // Display the address list
+            });
+        } else {
+            // User chooses to cancel
+            console.log('User cancelled the query.');
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const showCirclesButton = document.getElementById('showCirclesButton');
@@ -153,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Set button click event listeners
 document.addEventListener('DOMContentLoaded', () => {
     const showButton = document.getElementById('showDeliverableAddressesButton');
-    showButton.addEventListener('click', function() {
-        showDeliverableAddresses(map, addressDetails);
-    });
+    if (showButton) {
+        showButton.addEventListener('click', function() {
+            showDeliverableAddresses(map, addressDetails);
+        });
+    }
 });

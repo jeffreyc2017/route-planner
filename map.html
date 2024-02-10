@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route Planner</title>
+
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+
+    <script src="./dist/bundle.js" type="module"></script>
+
+</head>
+<body>
+    <div id="map"></div>
+
+    <div>
+        <progress id="queryProgress" value="0" max="100"></progress>
+    </div>
+
+    <button id="deletePolygons">Delete All Areas</button>
+    <button id="showCirclesButton">Show Circle Markers</button>
+    <button id="clearCirclesButton">Clear Circle Markers</button>
+    <button id="generateAddressList">Generate Address List</button>
+    <button id="downloadDataButton">Download Report</button>
+    <button id="showDeliverableAddressesButton">Show Deliverable Addresses</button>
+    
+    <div id="addressList"></div>
+    
+</body>
+</html>
