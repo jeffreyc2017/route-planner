@@ -1,4 +1,3 @@
-// import { config } from './config.dev.js';
 import { loadGoogleMapsAPI } from './google_maps_api.js';
 import { drawPointsOnMap, clearDrawnCircles } from './query_circles.js';
 import { generateCSV, downloadCSV } from './utils_csv.js';
@@ -11,7 +10,7 @@ let map;
 let geocoder;
 let drawnPolygon = null;
 
-const config = JSON.parse(process.env.CONFIG);
+const config = process.env.CONFIG;
 
 function initMap() {
     const mapDiv = document.getElementById('map');

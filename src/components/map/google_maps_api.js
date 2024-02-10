@@ -1,6 +1,4 @@
-// import { config } from "./config.dev.js";
-
-const config = JSON.parse(process.env.CONFIG);
+const config = process.env.CONFIG;
 
 function loadGoogleMapsAPI() {
     console.log("loading google maps api...");

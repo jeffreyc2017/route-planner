@@ -18,10 +18,9 @@
   },
   "scripts": {
     "watch": "webpack --watch",
-    "start": "webpack serve --open",
-    "build": "webpack",
+    "start": "webpack serve --env environment=dev --open",
+    "start:prd": "webpack serve --env environment=prd --open",
     "build:dev": "webpack --env environment=dev",
-    "build:stg": "webpack --env environment=stg",
     "build:prd": "webpack --env environment=prd",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
