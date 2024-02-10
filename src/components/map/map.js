@@ -5,69 +5,74 @@ import { generateCSV, downloadCSV } from './utils_csv.js';
 import { showDeliverableAddresses } from './deliverables.js';
 import { createDropdownMenu } from './marker.js';
 import { addressDetails, generateCoordinateMatrix, fetchAddresses, promptUserBeforeFetching } from './addresses.js';
-
+import { signOutUser } from '../signup/signup.js';
 
 let map;
 let geocoder;
 let drawnPolygon = null;
 
 function initMap() {
-    console.log('Initializing map...');
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: config.zoom,
-        center: { lat: config.lat, lng: config.lng },
-    });
-    
-    geocoder = new google.maps.Geocoder();
+    const mapDiv = document.getElementById('map');
+    if (mapDiv) { // Check if the map container exists
+        console.log('Initializing map...');
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: config.zoom,
+            center: { lat: config.lat, lng: config.lng },
+        });
+        
+        geocoder = new google.maps.Geocoder();
 
-    map.addListener("click", (mapsMouseEvent) => {
-        const {x, y} = mapsMouseEvent.pixel;
+        map.addListener("click", (mapsMouseEvent) => {
+            const {x, y} = mapsMouseEvent.pixel;
 
-        geocoder.geocode({ 'location': mapsMouseEvent.latLng }, function(results, status) {
-            if (status === 'OK') {
-                if (results[0]) {
-                    const address = results[0].formatted_address;
-                    const geocodedLatLng = results[0].geometry.location; // The precise latitude and longitude returned by geocoding
+            geocoder.geocode({ 'location': mapsMouseEvent.latLng }, function(results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        const address = results[0].formatted_address;
+                        const geocodedLatLng = results[0].geometry.location; // The precise latitude and longitude returned by geocoding
 
-                    createDropdownMenu(map, address, geocodedLatLng, x, y);
+                        createDropdownMenu(map, address, geocodedLatLng, x, y);
+                    } else {
+                        window.alert('No results found');
+                    }
                 } else {
-                    window.alert('No results found');
+                    window.alert('Geocoder failed due to: ' + status);
                 }
-            } else {
-                window.alert('Geocoder failed due to: ' + status);
+            });
+        });
+
+        const drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: google.maps.drawing.OverlayType.POLYGON,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: ['polygon']
+            },
+            polygonOptions: {
+                strokeColor: '#FF0000', // Boundary line color
+                strokeOpacity: 0.8,     // Boundary line transparency
+                strokeWeight: 2,        // Boundary line width
+                fillColor: '#FF0000',   // Fill color
+                fillOpacity: 0,         // Fill transparency, set to 0 to make polygon unfilled
+                clickable: false,
+                editable: true,
+                zIndex: 1
             }
         });
-    });
+        drawingManager.setMap(map);
 
-    const drawingManager = new google.maps.drawing.DrawingManager({
-        drawingMode: google.maps.drawing.OverlayType.POLYGON,
-        drawingControl: true,
-        drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: ['polygon']
-        },
-        polygonOptions: {
-            strokeColor: '#FF0000', // Boundary line color
-            strokeOpacity: 0.8,     // Boundary line transparency
-            strokeWeight: 2,        // Boundary line width
-            fillColor: '#FF0000',   // Fill color
-            fillOpacity: 0,         // Fill transparency, set to 0 to make polygon unfilled
-            clickable: false,
-            editable: true,
-            zIndex: 1
-        }
-    });
-    drawingManager.setMap(map);
+        google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+            // Handle the event after the polygon is completed
+            console.log(polygon.getPath().getArray());
 
-    google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
-        // Handle the event after the polygon is completed
-        console.log(polygon.getPath().getArray());
+            drawnPolygon = polygon;
 
-        drawnPolygon = polygon;
-
-        // Optional: If you want to disable drawing immediately after the polygon is completed, you can set the drawingManager's drawingMode to null
-        drawingManager.setDrawingMode(null);
-    });
+            // Optional: If you want to disable drawing immediately after the polygon is completed, you can set the drawingManager's drawingMode to null
+            drawingManager.setDrawingMode(null);
+        });
+    } else {
+        console.log('Map container not found, skipping map initialization.');
+    }
 }
 
 window.initMap = initMap;
@@ -165,4 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
             showDeliverableAddresses(map, addressDetails);
         });
     }
+
+    const signoutBtn = document.getElementById('sign-out-btn');
+    if (signoutBtn) {
+        signoutBtn.addEventListener('click', signOutUser);
+    }
 });
+

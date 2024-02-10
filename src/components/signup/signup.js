@@ -1,6 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from "firebase/analytics";
 
 import { firebaseConfig } from './firebase_config.js';
@@ -74,3 +74,15 @@ const googleSignInBtn = document.getElementById('google-sign-in-btn');
 if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', googleSignIn);
 }
+
+// Function to sign out the user
+export const signOutUser = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log('User signed out.');
+      window.location.href = './signup.html'; // Redirect to login page after sign out
+    }).catch((error) => {
+      // An error happened.
+      console.error('Error signing out:', error);
+    });
+};
