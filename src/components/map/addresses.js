@@ -1,4 +1,4 @@
-import { config } from "./config.js";
+import { config } from "./config.dev.js";
 
 let addressDetails = new Map(); // Used to store addresses and their related information
 let failedPoints = [];

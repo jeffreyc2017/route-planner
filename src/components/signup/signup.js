@@ -3,9 +3,11 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from "firebase/analytics";
 
-import { firebaseConfig } from './firebase_config.js';
+// import { firebaseConfig } from './firebase_config.dev.js';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
