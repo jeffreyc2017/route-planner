@@ -1,5 +1,4 @@
-import { config } from "./config.dev.js";
-
+const config = process.env.CONFIG;
 let addressDetails = new Map(); // Used to store addresses and their related information
 let failedPoints = [];
 

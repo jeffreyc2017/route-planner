@@ -80,14 +80,6 @@ window.initMap = initMap;
 
 document.addEventListener("DOMContentLoaded", loadGoogleMapsAPI);
 
-const deletePolygonsBtn = document.getElementById('deletePolygons');
-if (deletePolygonsBtn) {
-    deletePolygonsBtn.addEventListener('click', function() {
-        drawnPolygon.setMap(null);
-        drawnPolygon = null;
-    });
-}
-
 // Example function to display addresses
 function displayAddresses(addresses) {
     const addressListElement = document.getElementById('addressList');
@@ -99,36 +91,43 @@ function displayAddresses(addresses) {
     });
 }
 
-// Button click event handlers
-const generateAddressListBtn = document.getElementById('generateAddressList');
-if (generateAddressListBtn) {
-    generateAddressListBtn.addEventListener('click', function() {
-        if (!drawnPolygon) {
-            alert("Please define an area first.");
-            return;
-        }
-
-        let points = generateCoordinateMatrix(drawnPolygon);
-
-        // Assuming points is the array of coordinates generated earlier
-        // Assuming map is the instance of Google Maps
-
-        drawPointsOnMap(points, map);
-
-        if (promptUserBeforeFetching(points)) {
-            // User chooses to continue, start batch querying addresses
-            fetchAddresses(geocoder, points).then(addresses => {
-                // Process the queried addresses
-                displayAddresses(addresses); // Display the address list
-            });
-        } else {
-            // User chooses to cancel
-            console.log('User cancelled the query.');
-        }
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
+    const deletePolygonsBtn = document.getElementById('deletePolygons');
+    if (deletePolygonsBtn) {
+        deletePolygonsBtn.addEventListener('click', function() {
+            drawnPolygon.setMap(null);
+            drawnPolygon = null;
+        });
+    }
+    
+    const generateAddressListBtn = document.getElementById('generateAddressList');
+    if (generateAddressListBtn) {
+        generateAddressListBtn.addEventListener('click', function() {
+            if (!drawnPolygon) {
+                alert("Please define an area first.");
+                return;
+            }
+
+            let points = generateCoordinateMatrix(drawnPolygon);
+
+            // Assuming points is the array of coordinates generated earlier
+            // Assuming map is the instance of Google Maps
+
+            drawPointsOnMap(points, map);
+
+            if (promptUserBeforeFetching(points)) {
+                // User chooses to continue, start batch querying addresses
+                fetchAddresses(geocoder, points).then(addresses => {
+                    // Process the queried addresses
+                    displayAddresses(addresses); // Display the address list
+                });
+            } else {
+                // User chooses to cancel
+                console.log('User cancelled the query.');
+            }
+        });
+    }
+
     const showCirclesButton = document.getElementById('showCirclesButton');
     if (showCirclesButton) {
         showCirclesButton.addEventListener('click', function() {
@@ -141,18 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
             drawPointsOnMap(points, map);
         });
     }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
     const clearCirclesButton = document.getElementById('clearCirclesButton');
     if (clearCirclesButton) {
         clearCirclesButton.addEventListener('click', function() {
             clearDrawnCircles();
         });
     }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
     const downloadDataButton = document.getElementById('downloadDataButton');
     if (downloadDataButton) {
         downloadDataButton.addEventListener('click', async function() {
@@ -161,10 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadCSV(csvContent);
         });
     }
-});
 
-// Set button click event listeners
-document.addEventListener('DOMContentLoaded', () => {
     const showButton = document.getElementById('showDeliverableAddressesButton');
     if (showButton) {
         showButton.addEventListener('click', function() {

@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Access Your Account</title>
     <link rel="stylesheet" href="./css/signup.css">
     <script src="./dist/bundle.js" type="module"></script>
 </head>
 <body>
     <div class="signup-container">
-        <h2>Sign Up</h2>
-        <form id="signup-form">
+        <h2>Access Your Account</h2>
+        <p>Enter your email and password to sign up or sign in.</p>
+        <form id="auth-form">
             <div>
                 <input type="email" id="user-email" placeholder="Email" required>
                 <input type="password" id="user-password" placeholder="Password" required>
-                <button type="submit">Sign Up</button>
+                <button type="submit" id="auth-button">Continue</button>
             </div>
-            <button id="google-sign-in-btn" class="google-btn">Sign in with Google</button>
+            <!-- Optional: If you want a clearer distinction between actions, you can provide toggles or additional text here. -->
         </form>
+        <div class="alternative-signin">
+            <span>Or sign in with</span>
+            <button id="google-sign-in-btn" class="google-btn">Google</button>
+        </div>
     </div>
 </body>
 </html>

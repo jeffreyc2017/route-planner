@@ -1,17 +1,12 @@
-
 import { initializeApp } from 'firebase/app';
-import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from "firebase/analytics";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebase_config = process.env.FIREBASE_CONFIG;
 
 // Initialize Firebase
 const app = initializeApp(firebase_config);
 const analytics = getAnalytics(app);
-// Initialize Firebase App here if not already initialized
 
 const auth = getAuth(app);
 
@@ -21,69 +16,81 @@ export const checkAuthState = (callback) => {
     });
 };
 
-const signupForm = document.getElementById('signup-form');
-if (signupForm) {
-    signupForm.addEventListener('submit', function(event) {
+// Combined Sign In/Up Form
+const authForm = document.getElementById('auth-form');
+if (authForm) {
+    authForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
         const email = document.getElementById('user-email').value;
         const password = document.getElementById('user-password').value;
 
-        createUserWithEmailAndPassword(auth, email, password)
+        // Attempt to sign in
+        signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Sign-up successful.
-                const user = userCredential.user;
-                // Redirect to main content page
-                window.location.href = 'index.html';
+                // Sign-in successful.
+                console.log('User signed in successfully.');
+                window.location.href = 'index.html'; // Redirect to main content page
             })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // Handle errors here, such as displaying a message
-                console.error("Error signing up:", errorCode, errorMessage);
+            .catch((signInError) => {
+                if (signInError.code === 'auth/invalid-credential') {
+                    // If user doesn't exist or wrong password, attempt to sign up
+                    createUserWithEmailAndPassword(auth, email, password)
+                        .then((userCredential) => {
+                            // Sign-up successful.
+                            console.log('User created successfully, sending verification email...');
+                            sendVerificationEmail(userCredential.user);
+                            
+                            // Optionally, inform the user to check their email for the verification link
+                            alert('Please check your email to verify your account.');
+                        })
+                        .catch((error) => {
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            console.error("Error signing up:", errorCode, errorMessage);
+                        });
+                } else {
+                    console.error("Error signing in:", signInError.code, signInError.message);
+                }
             });
     });
 }
 
-// Google Sign-In
+function sendVerificationEmail(user) {
+    sendEmailVerification(user)
+        .then(() => {
+            // Email verification sent!
+            console.log('Verification email sent.');
+        })
+        .catch((error) => {
+            // Handle Errors here.
+            console.error('Error sending email verification:', error);
+        });
+}
+
+// Google Sign-In Functionality as before
 export const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
     .then((result) => {
-        // This gives you a Google Access Token. You can use it to access Google APIs.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // Redirect to your main application page or handle the user info as needed
-        window.location.href = 'map.html'; // Example redirect
+        // Google sign-in successful.
+        window.location.href = 'map.html'; // Redirect on successful sign-in
     }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // Show an error message or handle the error appropriately
-        console.error("Error during Google sign-in:", errorMessage);
+        console.error("Error during Google sign-in:", error.message);
     });
 };
 
-// Attach the Google sign-in function to a button click or other event
 const googleSignInBtn = document.getElementById('google-sign-in-btn');
 if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', googleSignIn);
 }
 
-// Function to sign out the user
+// Sign Out Functionality as before
 export const signOutUser = () => {
     signOut(auth).then(() => {
-      // Sign-out successful.
       console.log('User signed out.');
-      window.location.href = './signup.html'; // Redirect to login page after sign out
+      window.location.href = './signup.html'; // Redirect to signup page after sign out
     }).catch((error) => {
-      // An error happened.
       console.error('Error signing out:', error);
     });
 };
