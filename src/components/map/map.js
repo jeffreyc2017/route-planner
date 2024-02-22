@@ -4,7 +4,7 @@ import { generateCSV, downloadCSV } from './utils_csv.js';
 import { showDeliverableAddresses } from './deliverables.js';
 import { createDropdownMenu } from './marker.js';
 import { addressDetails, generateCoordinateMatrix, fetchAddresses, promptUserBeforeFetching } from './addresses.js';
-import { signOutUser } from '../signup/signup.js';
+import { signOutUser } from '../signup/auth.js';
 
 let map;
 let geocoder;
@@ -20,13 +20,13 @@ function initMap() {
             zoom: config.zoom,
             center: { lat: config.lat, lng: config.lng },
         });
-        
+
         geocoder = new google.maps.Geocoder();
 
         map.addListener("click", (mapsMouseEvent) => {
-            const {x, y} = mapsMouseEvent.pixel;
+            const { x, y } = mapsMouseEvent.pixel;
 
-            geocoder.geocode({ 'location': mapsMouseEvent.latLng }, function(results, status) {
+            geocoder.geocode({ 'location': mapsMouseEvent.latLng }, function (results, status) {
                 if (status === 'OK') {
                     if (results[0]) {
                         const address = results[0].formatted_address;
@@ -62,7 +62,7 @@ function initMap() {
         });
         drawingManager.setMap(map);
 
-        google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+        google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
             // Handle the event after the polygon is completed
             console.log(polygon.getPath().getArray());
 
@@ -76,10 +76,6 @@ function initMap() {
     }
 }
 
-window.initMap = initMap;
-
-document.addEventListener("DOMContentLoaded", loadGoogleMapsAPI);
-
 // Example function to display addresses
 function displayAddresses(addresses) {
     const addressListElement = document.getElementById('addressList');
@@ -92,17 +88,26 @@ function displayAddresses(addresses) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    if (!path.endsWith('/map.html')) {
+        return;
+    }
+
+    loadGoogleMapsAPI();
+
+    window.initMap = initMap;
+
     const deletePolygonsBtn = document.getElementById('deletePolygons');
     if (deletePolygonsBtn) {
-        deletePolygonsBtn.addEventListener('click', function() {
+        deletePolygonsBtn.addEventListener('click', function () {
             drawnPolygon.setMap(null);
             drawnPolygon = null;
         });
     }
-    
+
     const generateAddressListBtn = document.getElementById('generateAddressList');
     if (generateAddressListBtn) {
-        generateAddressListBtn.addEventListener('click', function() {
+        generateAddressListBtn.addEventListener('click', function () {
             if (!drawnPolygon) {
                 alert("Please define an area first.");
                 return;
@@ -130,12 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showCirclesButton = document.getElementById('showCirclesButton');
     if (showCirclesButton) {
-        showCirclesButton.addEventListener('click', function() {
+        showCirclesButton.addEventListener('click', function () {
             if (!drawnPolygon) {
                 alert("Please define an area first.");
                 return;
             }
-        
+
             let points = generateCoordinateMatrix(drawnPolygon);
             drawPointsOnMap(points, map);
         });
@@ -143,14 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const clearCirclesButton = document.getElementById('clearCirclesButton');
     if (clearCirclesButton) {
-        clearCirclesButton.addEventListener('click', function() {
+        clearCirclesButton.addEventListener('click', function () {
             clearDrawnCircles();
         });
     }
 
     const downloadDataButton = document.getElementById('downloadDataButton');
     if (downloadDataButton) {
-        downloadDataButton.addEventListener('click', async function() {
+        downloadDataButton.addEventListener('click', async function () {
             // Assuming data is the data you need to download, here you need to get or generate these data according to the actual situation
             const csvContent = generateCSV(addressDetails);
             downloadCSV(csvContent);
@@ -159,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showButton = document.getElementById('showDeliverableAddressesButton');
     if (showButton) {
-        showButton.addEventListener('click', function() {
+        showButton.addEventListener('click', function () {
             showDeliverableAddresses(map, addressDetails);
         });
     }

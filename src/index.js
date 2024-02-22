@@ -1,5 +1,5 @@
 
-import { checkAuthState } from './components/signup/signup';
+import { checkAuthState } from './components/signup/auth';
 import './components/map/map';
 
 checkAuthState((isAuthenticated) => {
