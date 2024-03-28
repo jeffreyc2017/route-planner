@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "firebase": "^10.8.0"
+    "firebase": "^10.9.0"
   },
   "name": "route_planner",
   "description": "Route planner for postman",
